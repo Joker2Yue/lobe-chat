@@ -2,7 +2,7 @@ import { join } from 'node:path';
 
 import * as dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
-import { migrate as neonMigrate } from 'drizzle-orm/neon-serverless/migrator';
+import { migrate as neonMigrate } from 'drizzle-orm/neon-http/migrator';
 import { migrate as nodeMigrate } from 'drizzle-orm/node-postgres/migrator';
 
 // @ts-ignore tsgo handle esm import cjs and compatibility issues

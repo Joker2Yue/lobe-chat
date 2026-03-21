@@ -1,3 +1,4 @@
+import agent from './agent';
 import agentGroup from './agentGroup';
 import auth from './auth';
 import authError from './authError';
@@ -11,6 +12,7 @@ import discover from './discover';
 import editor from './editor';
 import electron from './electron';
 import error from './error';
+import eval_ from './eval';
 import file from './file';
 import home from './home';
 import hotkey from './hotkey';
@@ -37,9 +39,11 @@ import thread from './thread';
 import tool from './tool';
 import topic from './topic';
 import ui from './ui';
+import video from './video';
 import welcome from './welcome';
 
 const resources = {
+  agent,
   agentGroup,
   auth,
   authError,
@@ -51,6 +55,7 @@ const resources = {
   'desktop-onboarding': desktopOnboarding,
   discover,
   editor,
+  'eval': eval_,
   electron,
   error,
   file,
@@ -81,6 +86,7 @@ const resources = {
   tool,
   topic,
   ui,
+  video,
   welcome,
 } as const;
 

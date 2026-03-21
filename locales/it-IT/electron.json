@@ -93,6 +93,10 @@
   "sync.mode.useSelfHosted": "Utilizzare un'istanza self-hosted?",
   "sync.selfHosted.description": "Versione comunitaria che puoi distribuire autonomamente",
   "sync.selfHosted.title": "Istanza self-hosted",
+  "tab.closeCurrentTab": "Chiudi scheda",
+  "tab.closeLeftTabs": "Chiudi schede a sinistra",
+  "tab.closeOtherTabs": "Chiudi altre schede",
+  "tab.closeRightTabs": "Chiudi schede a destra",
   "updater.checkingUpdate": "Verifica aggiornamenti in corso",
   "updater.checkingUpdateDesc": "Recupero informazioni sulla versione...",
   "updater.downloadNewVersion": "Scarica nuova versione",
@@ -116,5 +120,9 @@
   "waitingOAuth.errorTitle": "Connessione di autorizzazione fallita",
   "waitingOAuth.helpText": "Se il browser non si è aperto automaticamente, fai clic su annulla e riprova",
   "waitingOAuth.retry": "Riprova",
-  "waitingOAuth.title": "In attesa della connessione di autorizzazione"
+  "waitingOAuth.title": "In attesa della connessione di autorizzazione",
+  "window.close": "Chiudi finestra",
+  "window.maximize": "Massimizza finestra",
+  "window.minimize": "Minimizza finestra",
+  "window.restore": "Ripristina finestra"
 }

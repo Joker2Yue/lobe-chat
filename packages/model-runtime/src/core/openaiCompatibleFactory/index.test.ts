@@ -351,7 +351,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           'data: {"inputTextTokens":5,"outputTextTokens":5,"totalInputTokens":5,"totalOutputTokens":5,"totalTokens":10}\n\n',
           'id: output_speed\n',
           'event: speed\n',
-          expect.stringMatching(/^data: {.*"tps":.*,"ttft":.*}\n\n$/), // tps ttft should be calculated with elapsed time
+          expect.stringMatching(/^data: \{.*"tps":.*,"ttft":.*\}\n\n$/), // tps ttft should be calculated with elapsed time
           'id: a\n',
           'event: stop\n',
           'data: "stop"\n\n',
@@ -427,7 +427,7 @@ describe('LobeOpenAICompatibleFactory', () => {
           'data: {"inputTextTokens":5,"outputTextTokens":5,"totalInputTokens":5,"totalOutputTokens":5,"totalTokens":10,"cost":0.000005}\n\n',
           'id: output_speed\n',
           'event: speed\n',
-          expect.stringMatching(/^data: {.*"tps":.*,"ttft":.*}\n\n$/), // tps ttft should be calculated with elapsed time
+          expect.stringMatching(/^data: \{.*"tps":.*,"ttft":.*\}\n\n$/), // tps ttft should be calculated with elapsed time
           'id: a\n',
           'event: stop\n',
           'data: "stop"\n\n',
@@ -789,6 +789,80 @@ describe('LobeOpenAICompatibleFactory', () => {
         }
       });
 
+      it('should detect ExceededContextWindow from error message text', async () => {
+        const apiError = new OpenAI.APIError(
+          400,
+          {
+            error: {
+              message:
+                "This model's maximum context length is 131072 tokens. However, your messages resulted in 140000 tokens.",
+            },
+            status: 400,
+          },
+          'Error message',
+          {},
+        );
+
+        vi.spyOn(instance['client'].chat.completions, 'create').mockRejectedValue(apiError);
+
+        try {
+          await instance.chat({
+            messages: [{ content: 'Hello', role: 'user' }],
+            model: 'mistralai/mistral-7b-instruct:free',
+            temperature: 0,
+          });
+        } catch (e) {
+          expect(e).toEqual({
+            endpoint: defaultBaseURL,
+            error: {
+              error: {
+                message:
+                  "This model's maximum context length is 131072 tokens. However, your messages resulted in 140000 tokens.",
+              },
+              status: 400,
+            },
+            errorType: AgentRuntimeErrorType.ExceededContextWindow,
+            provider,
+          });
+        }
+      });
+
+      it('should detect QuotaLimitReached from error message text', async () => {
+        const apiError = new OpenAI.APIError(
+          429,
+          {
+            error: {
+              message: 'Resource has been exhausted (e.g. check quota).',
+            },
+            status: 429,
+          },
+          'Error message',
+          {},
+        );
+
+        vi.spyOn(instance['client'].chat.completions, 'create').mockRejectedValue(apiError);
+
+        try {
+          await instance.chat({
+            messages: [{ content: 'Hello', role: 'user' }],
+            model: 'mistralai/mistral-7b-instruct:free',
+            temperature: 0,
+          });
+        } catch (e) {
+          expect(e).toEqual({
+            endpoint: defaultBaseURL,
+            error: {
+              error: {
+                message: 'Resource has been exhausted (e.g. check quota).',
+              },
+              status: 429,
+            },
+            errorType: AgentRuntimeErrorType.QuotaLimitReached,
+            provider,
+          });
+        }
+      });
+
       it('should return AgentRuntimeError for non-OpenAI errors', async () => {
         // Arrange
         const genericError = new Error('Generic Error');
@@ -1048,6 +1122,49 @@ describe('LobeOpenAICompatibleFactory', () => {
         },
         { timeout: 10000 },
       );
+
+      it('should enable strictToolPairing when building Responses API input', async () => {
+        const LobeMockProviderUseResponses = createOpenAICompatibleRuntime({
+          baseURL: 'https://api.test.com/v1',
+          chatCompletion: {
+            useResponse: true,
+          },
+          provider: ModelProvider.OpenAI,
+        });
+
+        const inst = new LobeMockProviderUseResponses({ apiKey: 'test' });
+        const convertSpy = vi
+          .spyOn(openaiHelpers, 'convertOpenAIResponseInputs')
+          .mockResolvedValue([{ role: 'user', content: 'mocked input' }] as any);
+
+        vi.spyOn(inst['client'].responses, 'create').mockResolvedValue({
+          toReadableStream: () =>
+            new ReadableStream({
+              start(controller) {
+                controller.close();
+              },
+            }),
+        } as any);
+
+        try {
+          await inst.chat({
+            messages: [{ content: 'hi', role: 'user' }],
+            model: 'any-model',
+            temperature: 0,
+          });
+        } catch {
+          // Ignore stream mock limitations; we only care about input conversion options.
+        }
+
+        expect(convertSpy).toHaveBeenCalledWith(
+          [{ content: 'hi', role: 'user' }],
+          expect.objectContaining({
+            forceImageBase64: undefined,
+            forceVideoBase64: undefined,
+            strictToolPairing: true,
+          }),
+        );
+      });
 
       it(
         'should route to Responses API when model matches useResponseModels',
@@ -1737,6 +1854,46 @@ describe('LobeOpenAICompatibleFactory', () => {
       await expect(instance.generateObject(payload)).rejects.toThrow(
         'API Error: Invalid schema format',
       );
+    });
+
+    it('should detect ExceededContextWindow from responses API error message text', async () => {
+      const apiError = new OpenAI.APIError(
+        400,
+        {
+          error: {
+            message:
+              '400 Input tokens exceed the configured limit of 272000 tokens. Your messages resulted in 479832 tokens. Please reduce the length of the messages.',
+          },
+          status: 400,
+        },
+        'Error message',
+        {},
+      );
+
+      vi.spyOn(instance['client'].responses, 'create').mockRejectedValue(apiError);
+
+      const payload = {
+        messages: [{ content: 'Generate data', role: 'user' as const }],
+        model: 'gpt-5-mini',
+        responseApi: true,
+        schema: {
+          name: 'test_tool',
+          schema: { properties: {}, type: 'object' as const },
+        },
+      };
+
+      await expect(instance.generateObject(payload)).rejects.toEqual({
+        endpoint: defaultBaseURL,
+        error: {
+          error: {
+            message:
+              '400 Input tokens exceed the configured limit of 272000 tokens. Your messages resulted in 479832 tokens. Please reduce the length of the messages.',
+          },
+          status: 400,
+        },
+        errorType: AgentRuntimeErrorType.ExceededContextWindow,
+        provider,
+      });
     });
 
     describe('chat completions API path', () => {

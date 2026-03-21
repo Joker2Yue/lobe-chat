@@ -1,6 +1,6 @@
 import { ENABLE_BUSINESS_FEATURES } from '@lobechat/business-const';
 
-import type { AiFullModelCard, LobeDefaultAiModelListItem } from '../types/aiModel';
+import { type AiFullModelCard, type LobeDefaultAiModelListItem } from '../types/aiModel';
 import { default as ai21 } from './ai21';
 import { default as ai302 } from './ai302';
 import { default as ai360 } from './ai360';
@@ -33,6 +33,7 @@ import { default as internlm } from './internlm';
 import { default as jina } from './jina';
 import { default as lmstudio } from './lmstudio';
 import { default as lobehub } from './lobehub/index';
+import { default as longcat } from './longcat';
 import { default as minimax } from './minimax';
 import { default as mistral } from './mistral';
 import { default as modelscope } from './modelscope';
@@ -56,6 +57,7 @@ import { default as sensenova } from './sensenova';
 import { default as siliconcloud } from './siliconcloud';
 import { default as spark } from './spark';
 import { default as stepfun } from './stepfun';
+import { default as straico } from './straico';
 import { default as taichu } from './taichu';
 import { default as tencentcloud } from './tencentcloud';
 import { default as togetherai } from './togetherai';
@@ -124,6 +126,7 @@ export const LOBE_DEFAULT_MODEL_LIST = buildDefaultModelList({
   internlm,
   jina,
   lmstudio,
+  longcat,
   ...(ENABLE_BUSINESS_FEATURES ? { lobehub } : {}),
   minimax,
   mistral,
@@ -148,6 +151,7 @@ export const LOBE_DEFAULT_MODEL_LIST = buildDefaultModelList({
   siliconcloud,
   spark,
   stepfun,
+  straico,
   taichu,
   tencentcloud,
   togetherai,
@@ -198,6 +202,7 @@ export { default as internlm } from './internlm';
 export { default as jina } from './jina';
 export { default as lmstudio } from './lmstudio';
 export { default as lobehub } from './lobehub/index';
+export { default as longcat } from './longcat';
 export { default as minimax } from './minimax';
 export { default as mistral } from './mistral';
 export { default as modelscope } from './modelscope';
@@ -221,6 +226,7 @@ export { default as sensenova } from './sensenova';
 export { default as siliconcloud } from './siliconcloud';
 export { default as spark } from './spark';
 export { default as stepfun } from './stepfun';
+export { default as straico } from './straico';
 export { default as taichu } from './taichu';
 export { default as tencentcloud } from './tencentcloud';
 export { default as togetherai } from './togetherai';

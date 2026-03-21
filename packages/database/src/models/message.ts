@@ -35,7 +35,6 @@ import {
   inArray,
   isNotNull,
   isNull,
-  like,
   lte,
   not,
   or,
@@ -43,6 +42,7 @@ import {
 } from 'drizzle-orm';
 
 import { merge } from '@/utils/merge';
+import { sanitizeNullBytes } from '@/utils/sanitizeNullBytes';
 import { today } from '@/utils/time';
 
 import {
@@ -61,8 +61,10 @@ import {
   messageTranslates,
   messageTTS,
   threads,
+  topics,
 } from '../schemas';
-import type { LobeChatDatabase } from '../type';
+import type { LobeChatDatabase, Transaction } from '../type';
+import { sanitizeBm25Query } from '../utils/bm25';
 import { genEndDateWhere, genRangeWhere, genStartDateWhere, genWhere } from '../utils/genWhere';
 import { idGenerator } from '../utils/idGenerator';
 
@@ -99,6 +101,17 @@ export class MessageModel {
   constructor(db: LobeChatDatabase, userId: string) {
     this.userId = userId;
     this.db = db;
+  }
+
+  /**
+   * Touch topics' updatedAt timestamp within a transaction
+   */
+  private async touchTopicUpdatedAt(trx: Transaction, topicIds: string[]) {
+    if (topicIds.length === 0) return;
+    await trx
+      .update(topics)
+      .set({ updatedAt: new Date() })
+      .where(and(inArray(topics.id, topicIds), eq(topics.userId, this.userId)));
   }
 
   // **************** Query *************** //
@@ -201,10 +214,10 @@ export class MessageModel {
     // 1. get basic messages with joins, excluding messages that belong to MessageGroups
     const result = await this.db
       .select({
-        /* eslint-disable sort-keys-fix/sort-keys-fix*/
         id: messages.id,
         role: messages.role,
         content: messages.content,
+        editorData: messages.editorData,
         reasoning: messages.reasoning,
         search: messages.search,
         metadata: messages.metadata,
@@ -463,8 +476,8 @@ export class MessageModel {
             })),
 
           extra: {
-            model: model,
-            provider: provider,
+            model,
+            provider,
             translate,
             tts: ttsId
               ? {
@@ -540,10 +553,10 @@ export class MessageModel {
     // 1. Query messages with joins
     const result = await this.db
       .select({
-        /* eslint-disable sort-keys-fix/sort-keys-fix*/
         id: messages.id,
         role: messages.role,
         content: messages.content,
+        editorData: messages.editorData,
         reasoning: messages.reasoning,
         search: messages.search,
         metadata: messages.metadata,
@@ -736,8 +749,8 @@ export class MessageModel {
             })),
 
           extra: {
-            model: model,
-            provider: provider,
+            model,
+            provider,
             translate,
             tts: ttsId
               ? {
@@ -1044,12 +1057,17 @@ export class MessageModel {
     return result[0];
   };
 
-  queryAll = async () => {
+  queryAll = async (params?: { current?: number; pageSize?: number }) => {
+    const { current = 0, pageSize = 100 } = params ?? {};
+    const offset = current * pageSize;
+
     const result = await this.db
       .select()
       .from(messages)
-      .orderBy(messages.createdAt)
-      .where(eq(messages.userId, this.userId));
+      .where(eq(messages.userId, this.userId))
+      .orderBy(desc(messages.createdAt))
+      .limit(pageSize)
+      .offset(offset);
 
     return result as DBMessageItem[];
   };
@@ -1064,11 +1082,14 @@ export class MessageModel {
   };
 
   queryByKeyword = async (keyword: string) => {
-    if (!keyword) return [];
-    const result = await this.db.query.messages.findMany({
-      orderBy: [desc(messages.createdAt)],
-      where: and(eq(messages.userId, this.userId), like(messages.content, `%${keyword}%`)),
-    });
+    if (!keyword.trim()) return [];
+
+    const bm25Query = sanitizeBm25Query(keyword);
+    const result = await this.db
+      .select()
+      .from(messages)
+      .where(and(eq(messages.userId, this.userId), sql`${messages.content} @@@ ${bm25Query}`))
+      .orderBy(desc(messages.createdAt));
 
     return result as DBMessageItem[];
   };
@@ -1259,11 +1280,11 @@ export class MessageModel {
       if (message.role === 'tool') {
         await trx.insert(messagePlugins).values({
           apiName: plugin?.apiName,
-          arguments: plugin?.arguments,
+          arguments: sanitizeNullBytes(plugin?.arguments),
           id,
           identifier: plugin?.identifier,
           intervention: pluginIntervention,
-          state: pluginState,
+          state: sanitizeNullBytes(pluginState),
           toolCallId: message.tool_call_id,
           type: plugin?.type,
           userId: this.userId,
@@ -1288,6 +1309,11 @@ export class MessageModel {
         );
       }
 
+      // Touch topic's updatedAt when creating a message in a topic
+      if (message.topicId) {
+        await this.touchTopicUpdatedAt(trx, [message.topicId]);
+      }
+
       return item;
     });
   };
@@ -1298,7 +1324,15 @@ export class MessageModel {
       return { ...m, role: m.role as any, userId: this.userId };
     });
 
-    return this.db.insert(messages).values(messagesToInsert);
+    const topicIds = [...new Set(newMessages.map((m) => m.topicId).filter(Boolean))] as string[];
+
+    return this.db.transaction(async (trx) => {
+      const result = await trx.insert(messages).values(messagesToInsert);
+
+      await this.touchTopicUpdatedAt(trx, topicIds);
+
+      return result;
+    });
   };
 
   createMessageQuery = async (params: NewMessageQueryParams) => {
@@ -1336,10 +1370,16 @@ export class MessageModel {
           mergedMetadata = merge(existingMessage?.metadata || {}, metadata);
         }
 
-        await trx
+        const [updated] = await trx
           .update(messages)
           .set({ ...message, ...(mergedMetadata && { metadata: mergedMetadata }) })
-          .where(and(eq(messages.id, id), eq(messages.userId, this.userId)));
+          .where(and(eq(messages.id, id), eq(messages.userId, this.userId)))
+          .returning({ topicId: messages.topicId });
+
+        // Touch topic's updatedAt when updating a message
+        if (updated?.topicId) {
+          await this.touchTopicUpdatedAt(trx, [updated.topicId]);
+        }
       });
 
       return { success: true };
@@ -1800,5 +1840,21 @@ export class MessageModel {
   private matchThread = (threadId?: string | null) => {
     if (!!threadId) return eq(messages.threadId, threadId);
     return isNull(messages.threadId);
+  };
+
+  /**
+   * Check which user IDs from the given list have at least one message.
+   */
+  static checkUsersHaveMessages = async (
+    db: LobeChatDatabase,
+    userIds: string[],
+  ): Promise<Set<string>> => {
+    if (userIds.length === 0) return new Set();
+    const result = await db
+      .select({ userId: messages.userId })
+      .from(messages)
+      .where(inArray(messages.userId, userIds))
+      .groupBy(messages.userId);
+    return new Set(result.map((r) => r.userId));
   };
 }

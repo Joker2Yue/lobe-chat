@@ -43,12 +43,14 @@ class AgentRuntimeService {
 
     // Apply context engineering with preprocessing configuration
     const llmMessages = await contextEngineering({
+      agentId: agentStoreState.activeAgentId,
       enableHistoryCount: agentChatConfigSelectors.enableHistoryCount(agentStoreState),
       // include user messages
       historyCount: agentChatConfigSelectors.historyCount(agentStoreState) + 2,
       inputTemplate: chatConfig.inputTemplate,
       messages: data.messages as any,
       ...modelRuntimeConfig,
+      plugins: agentConfig.plugins,
       systemRole: agentConfig.systemRole,
       tools: enabledToolIds,
     });

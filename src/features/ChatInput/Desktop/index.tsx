@@ -18,6 +18,7 @@ import { systemStatusSelectors } from '@/store/global/selectors';
 import { type ActionToolbarProps } from '../ActionBar';
 import ActionBar from '../ActionBar';
 import InputEditor from '../InputEditor';
+import RuntimeConfig from '../RuntimeConfig';
 import SendArea from '../SendArea';
 import TypoBar from '../TypoBar';
 import ContextContainer from './ContextContainer';
@@ -53,18 +54,27 @@ const styles = createStaticStyles(({ css }) => ({
 }));
 
 interface DesktopChatInputProps extends ActionToolbarProps {
-  extenHeaderContent?: ReactNode;
+  actionBarStyle?: React.CSSProperties;
+  extentHeaderContent?: ReactNode;
   inputContainerProps?: ChatInputProps;
+  leftContent?: ReactNode;
+  sendAreaPrefix?: ReactNode;
   showFootnote?: boolean;
+  showRuntimeConfig?: boolean;
 }
 
 const DesktopChatInput = memo<DesktopChatInputProps>(
   ({
     showFootnote,
+    showRuntimeConfig = true,
     inputContainerProps,
-    extenHeaderContent,
+    extentHeaderContent,
+    actionBarStyle,
+    borderRadius,
     extraActionItems,
     dropdownPlacement,
+    leftContent,
+    sendAreaPrefix,
   }) => {
     const { t } = useTranslation('chat');
     const [chatInputHeight, updateSystemStatus] = useGlobalStore((s) => [
@@ -95,7 +105,7 @@ const DesktopChatInput = memo<DesktopChatInputProps>(
       <Flexbox
         className={cx(styles.container, expand && styles.fullscreen)}
         gap={8}
-        paddingBlock={expand ? 0 : showFootnote ? '0 12px' : '0 16px'}
+        paddingBlock={expand ? 0 : showFootnote ? '0 12px' : '0 8px'}
       >
         <ChatInput
           data-testid="chat-input"
@@ -107,19 +117,31 @@ const DesktopChatInput = memo<DesktopChatInputProps>(
           slashMenuRef={slashMenuRef}
           footer={
             <ChatInputActionBar
-              right={<SendArea />}
-              style={{ paddingRight: 8 }}
+              style={actionBarStyle ?? { paddingRight: 8 }}
               left={
-                <ActionBar
-                  dropdownPlacement={dropdownPlacement}
-                  extraActionItems={extraActionItems}
-                />
+                leftContent ?? (
+                  <ActionBar
+                    borderRadius={borderRadius}
+                    dropdownPlacement={dropdownPlacement}
+                    extraActionItems={extraActionItems}
+                  />
+                )
+              }
+              right={
+                sendAreaPrefix ? (
+                  <Flexbox horizontal align={'center'} gap={6}>
+                    {sendAreaPrefix}
+                    <SendArea />
+                  </Flexbox>
+                ) : (
+                  <SendArea />
+                )
               }
             />
           }
           header={
             <Flexbox gap={0}>
-              {extenHeaderContent}
+              {extentHeaderContent}
               {showTypoBar && <TypoBar />}
               {contextContainerNode}
             </Flexbox>
@@ -132,6 +154,7 @@ const DesktopChatInput = memo<DesktopChatInputProps>(
         >
           <InputEditor />
         </ChatInput>
+        {showRuntimeConfig && <RuntimeConfig />}
         {showFootnote && !expand && (
           <Center style={{ pointerEvents: 'none', zIndex: 100 }}>
             <Text className={styles.footnote} type={'secondary'}>

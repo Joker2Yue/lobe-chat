@@ -3,7 +3,7 @@
 import { SiGithub, SiX } from '@icons-pack/react-simple-icons';
 import { Center, Flexbox, Icon, Input, Modal, Text, TextArea, Tooltip } from '@lobehub/ui';
 import { type UploadProps } from 'antd';
-import { App, Form, Upload } from 'antd';
+import { App, Form, Modal as AntModal, Upload } from 'antd';
 import { cssVar } from 'antd-style';
 import { CircleHelp, Globe, ImagePlus, Trash2 } from 'lucide-react';
 import { memo, useCallback, useEffect, useState } from 'react';
@@ -70,12 +70,12 @@ const ProfileSetupModal = memo<ProfileSetupModalProps>(
     const [loading, setLoading] = useState(false);
     const locale = useGlobalStore(globalGeneralSelectors.currentLanguage);
 
-    // 检查是否是自动授权模式
+    // Check if it's in automatic authorization mode
     const enableMarketTrustedClient = useServerConfigStore(
       serverConfigSelectors.enableMarketTrustedClient,
     );
 
-    // 获取当前用户头像作为默认值
+    // Get the current user's avatar as the default value
     const currentUserAvatar = useUserStore(userProfileSelectors.userAvatar);
 
     // Avatar state
@@ -111,7 +111,7 @@ const ProfileSetupModal = memo<ProfileSetupModalProps>(
         });
 
         // Reset avatar and banner
-        // 如果 userProfile 有 avatarUrl 就用它，否则用当前用户头像作为默认值
+        // Use avatarUrl from userProfile if available, otherwise use the current user's avatar as default
         setAvatarUrl(userProfile?.avatarUrl || currentUserAvatar || null);
         setBannerUrl(userProfile?.bannerUrl || null);
       }
@@ -185,8 +185,8 @@ const ProfileSetupModal = memo<ProfileSetupModalProps>(
       setBannerUrl(null);
     }, []);
 
-    const handleSubmit = useCallback(async () => {
-      // 如果不是自动授权模式，需要校验 accessToken
+    const doSubmit = useCallback(async () => {
+      // If not in automatic authorization mode, need to validate accessToken
       if (!enableMarketTrustedClient && !accessToken) {
         message.error(t('profileSetup.errors.notAuthenticated'));
         return;
@@ -263,6 +263,33 @@ const ProfileSetupModal = memo<ProfileSetupModalProps>(
       onSuccess,
       t,
     ]);
+
+    const handleSubmit = useCallback(async () => {
+      try {
+        const values = await form.validateFields();
+        const oldUserName = userProfile?.userName;
+
+        // If userName changed and it's not first-time setup, show confirmation
+        if (!isFirstTimeSetup && oldUserName && values.userName !== oldUserName) {
+          AntModal.confirm({
+            cancelText: t('profileSetup.confirmChangeUserId.cancel'),
+            content: t('profileSetup.confirmChangeUserId.description', {
+              newId: values.userName,
+              oldId: oldUserName,
+            }),
+            okButtonProps: { danger: true },
+            okText: t('profileSetup.confirmChangeUserId.confirm'),
+            title: t('profileSetup.confirmChangeUserId.title'),
+            onOk: doSubmit,
+          });
+          return;
+        }
+
+        await doSubmit();
+      } catch {
+        // validateFields failed, form will show errors
+      }
+    }, [doSubmit, form, isFirstTimeSetup, t, userProfile?.userName]);
 
     const handleCancel = useCallback(() => {
       if (!isFirstTimeSetup) {

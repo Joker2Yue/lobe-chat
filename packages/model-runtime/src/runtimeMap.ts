@@ -30,6 +30,7 @@ import { LobeInternLMAI } from './providers/internlm';
 import { LobeJinaAI } from './providers/jina';
 import { LobeLMStudioAI } from './providers/lmstudio';
 import { LobeHubAI } from './providers/lobehub';
+import { LobeLongCatAI } from './providers/longcat';
 import { LobeMinimaxAI } from './providers/minimax';
 import { LobeMistralAI } from './providers/mistral';
 import { LobeModelScopeAI } from './providers/modelscope';
@@ -53,6 +54,7 @@ import { LobeSenseNovaAI } from './providers/sensenova';
 import { LobeSiliconCloudAI } from './providers/siliconcloud';
 import { LobeSparkAI } from './providers/spark';
 import { LobeStepfunAI } from './providers/stepfun';
+import { LobeStraicoAI } from './providers/straico';
 import { LobeTaichuAI } from './providers/taichu';
 import { LobeTencentCloudAI } from './providers/tencentcloud';
 import { LobeTogetherAI } from './providers/togetherai';
@@ -102,6 +104,7 @@ export const providerRuntimeMap = {
   jina: LobeJinaAI,
   lmstudio: LobeLMStudioAI,
   lobehub: LobeHubAI,
+  longcat: LobeLongCatAI,
   minimax: LobeMinimaxAI,
   mistral: LobeMistralAI,
   modelscope: LobeModelScopeAI,
@@ -126,6 +129,7 @@ export const providerRuntimeMap = {
   siliconcloud: LobeSiliconCloudAI,
   spark: LobeSparkAI,
   stepfun: LobeStepfunAI,
+  straico: LobeStraicoAI,
   taichu: LobeTaichuAI,
   tencentcloud: LobeTencentCloudAI,
   togetherai: LobeTogetherAI,

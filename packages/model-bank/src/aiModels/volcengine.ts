@@ -1,4 +1,9 @@
-import type { AIChatModelCard, AIImageModelCard } from '../types/aiModel';
+import {
+  type AIChatModelCard,
+  type AIImageModelCard,
+  type AIVideoModelCard,
+} from '../types/aiModel';
+import { seedance15ProParams } from './lobehub/video';
 
 // https://www.volcengine.com/docs/82379/1330310
 
@@ -7,6 +12,249 @@ const doubaoChatModels: AIChatModelCard[] = [
     abilities: {
       functionCall: true,
       reasoning: true,
+      video: true,
+      vision: true,
+    },
+    config: {
+      deploymentName: 'doubao-seed-2-0-pro-260215',
+    },
+    contextWindowTokens: 256_000,
+    description:
+      "Doubao-Seed-2.0-pro is ByteDance's flagship Agent general model, with all-around leaps in complex task planning and execution capabilities.",
+    displayName: 'Doubao Seed 2.0 Pro',
+    enabled: true,
+    id: 'doubao-seed-2.0-pro',
+    maxOutput: 128_000,
+    pricing: {
+      currency: 'CNY',
+      units: [
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]': 3.2,
+              '[0.032, 0.128]': 4.8,
+              '[0.128, 0.256]': 9.6,
+            },
+            pricingParams: ['textInputRange'],
+          },
+          name: 'textInput',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]': 16,
+              '[0.032, 0.128]': 24,
+              '[0.128, 0.256]': 48,
+            },
+            pricingParams: ['textInputRange'],
+          },
+          name: 'textOutput',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        { name: 'textInput_cacheRead', rate: 0.64, strategy: 'fixed', unit: 'millionTokens' },
+        {
+          lookup: { prices: { '1h': 0.017 }, pricingParams: ['ttl'] },
+          name: 'textInput_cacheWrite',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+      ],
+    },
+    releasedAt: '2026-02-15',
+    settings: {
+      extendParams: ['gpt5ReasoningEffort'],
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      video: true,
+      vision: true,
+    },
+    config: {
+      deploymentName: 'doubao-seed-2-0-lite-260215',
+    },
+    contextWindowTokens: 256_000,
+    description:
+      'Doubao-Seed-2.0-lite is a new multimodal deep-reasoning model that delivers better value and a strong choice for common tasks, with a context window up to 256k.',
+    displayName: 'Doubao Seed 2.0 Lite',
+    enabled: true,
+    id: 'doubao-seed-2.0-lite',
+    maxOutput: 128_000,
+    pricing: {
+      currency: 'CNY',
+      units: [
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]': 0.6,
+              '[0.032, 0.128]': 0.9,
+              '[0.128, 0.256]': 1.8,
+            },
+            pricingParams: ['textInputRange'],
+          },
+          name: 'textInput',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]': 3.6,
+              '[0.032, 0.128]': 5.4,
+              '[0.128, 0.256]': 10.8,
+            },
+            pricingParams: ['textInputRange'],
+          },
+          name: 'textOutput',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        { name: 'textInput_cacheRead', rate: 0.12, strategy: 'fixed', unit: 'millionTokens' },
+        {
+          lookup: { prices: { '1h': 0.017 }, pricingParams: ['ttl'] },
+          name: 'textInput_cacheWrite',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+      ],
+    },
+    releasedAt: '2026-02-15',
+    settings: {
+      extendParams: ['gpt5ReasoningEffort'],
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      video: true,
+      vision: true,
+    },
+    config: {
+      deploymentName: 'doubao-seed-2-0-mini-260215',
+    },
+    contextWindowTokens: 256_000,
+    description:
+      'Doubao-Seed-2.0-mini is a lightweight model with fast response and high performance, suitable for small tasks and high-concurrency scenarios.',
+    displayName: 'Doubao Seed 2.0 Mini',
+    id: 'doubao-seed-2.0-mini',
+    maxOutput: 128_000,
+    pricing: {
+      currency: 'CNY',
+      units: [
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]': 0.2,
+              '[0.032, 0.128]': 0.4,
+              '[0.128, 0.256]': 0.8,
+            },
+            pricingParams: ['textInputRange'],
+          },
+          name: 'textInput',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]': 2,
+              '[0.032, 0.128]': 4,
+              '[0.128, 0.256]': 8,
+            },
+            pricingParams: ['textInputRange'],
+          },
+          name: 'textOutput',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        { name: 'textInput_cacheRead', rate: 0.04, strategy: 'fixed', unit: 'millionTokens' },
+        {
+          lookup: { prices: { '1h': 0.017 }, pricingParams: ['ttl'] },
+          name: 'textInput_cacheWrite',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+      ],
+    },
+    releasedAt: '2026-02-15',
+    settings: {
+      extendParams: ['gpt5ReasoningEffort'],
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      video: true,
+      vision: true,
+    },
+    config: {
+      deploymentName: 'doubao-seed-2-0-code-preview-260215',
+    },
+    contextWindowTokens: 256_000,
+    description:
+      'Doubao-Seed-2.0-code is deeply optimized for agentic coding, supports multimodal inputs and a 256k context window, fitting coding, vision understanding, and agent workflows.',
+    displayName: 'Doubao Seed 2.0 Code',
+    id: 'doubao-seed-2.0-code',
+    maxOutput: 128_000,
+    pricing: {
+      currency: 'CNY',
+      units: [
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]': 3.2,
+              '[0.032, 0.128]': 4.8,
+              '[0.128, 0.256]': 9.6,
+            },
+            pricingParams: ['textInputRange'],
+          },
+          name: 'textInput',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        {
+          lookup: {
+            prices: {
+              '[0, 0.032]': 16,
+              '[0.032, 0.128]': 24,
+              '[0.128, 0.256]': 48,
+            },
+            pricingParams: ['textInputRange'],
+          },
+          name: 'textOutput',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+        { name: 'textInput_cacheRead', rate: 0.64, strategy: 'fixed', unit: 'millionTokens' },
+        {
+          lookup: { prices: { '1h': 0.017 }, pricingParams: ['ttl'] },
+          name: 'textInput_cacheWrite',
+          strategy: 'lookup',
+          unit: 'millionTokens',
+        },
+      ],
+    },
+    releasedAt: '2026-02-15',
+    settings: {
+      extendParams: ['gpt5ReasoningEffort'],
+    },
+    type: 'chat',
+  },
+  {
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      video: true,
       vision: true,
     },
     config: {
@@ -16,7 +264,6 @@ const doubaoChatModels: AIChatModelCard[] = [
     description:
       'Doubao-Seed-1.8 has stronger multimodal understanding and Agent capabilities, supports text/image/video input and context caching, and can deliver excellent performance in complex tasks.',
     displayName: 'Doubao Seed 1.8',
-    enabled: true,
     id: 'doubao-seed-1.8',
     maxOutput: 64_000,
     pricing: {
@@ -68,6 +315,7 @@ const doubaoChatModels: AIChatModelCard[] = [
     abilities: {
       functionCall: true,
       reasoning: true,
+      video: true,
       vision: true,
     },
     config: {
@@ -198,7 +446,6 @@ const doubaoChatModels: AIChatModelCard[] = [
     description:
       'DeepSeek-V3.2 is the first hybrid reasoning model from DeepSeek that integrates thinking into tool usage. It uses efficient architecture to save computation, large-scale reinforcement learning to enhance capabilities, and large-scale synthetic task data to strengthen generalization. The combination of these three achieves performance comparable to GPT-5-High, with significantly reduced output length, notably decreasing computational overhead and user wait times.',
     displayName: 'DeepSeek V3.2',
-    enabled: true,
     id: 'deepseek-v3.2',
     maxOutput: 32_768,
     pricing: {
@@ -291,6 +538,7 @@ const doubaoChatModels: AIChatModelCard[] = [
     abilities: {
       functionCall: true,
       reasoning: true,
+      video: true,
       vision: true,
     },
     config: {
@@ -343,6 +591,7 @@ const doubaoChatModels: AIChatModelCard[] = [
     abilities: {
       functionCall: true,
       reasoning: true,
+      video: true,
       vision: true,
     },
     config: {
@@ -392,6 +641,7 @@ const doubaoChatModels: AIChatModelCard[] = [
     abilities: {
       functionCall: true,
       reasoning: true,
+      video: true,
       vision: true,
     },
     config: {
@@ -445,6 +695,7 @@ const doubaoChatModels: AIChatModelCard[] = [
     abilities: {
       functionCall: true,
       reasoning: true,
+      video: true,
       vision: true,
     },
     config: {
@@ -498,6 +749,7 @@ const doubaoChatModels: AIChatModelCard[] = [
     abilities: {
       functionCall: true,
       reasoning: true,
+      video: true,
       vision: true,
     },
     config: {
@@ -507,7 +759,6 @@ const doubaoChatModels: AIChatModelCard[] = [
     description:
       'Doubao-Seed-1.6-flash is an ultra-fast multimodal deep-reasoning model with TPOT as low as 10ms. It supports both text and vision, surpasses the previous lite model in text understanding, and matches competing pro models in vision. It supports a 256k context window and up to 16k output tokens.',
     displayName: 'Doubao Seed 1.6 Flash',
-    enabled: true,
     id: 'doubao-seed-1.6-flash',
     maxOutput: 32_000,
     pricing: {
@@ -551,6 +802,7 @@ const doubaoChatModels: AIChatModelCard[] = [
     abilities: {
       functionCall: true,
       reasoning: true,
+      video: true,
       vision: true,
     },
     config: {
@@ -578,6 +830,7 @@ const doubaoChatModels: AIChatModelCard[] = [
     abilities: {
       functionCall: true,
       reasoning: true,
+      video: true,
       vision: true,
     },
     config: {
@@ -628,6 +881,7 @@ const doubaoChatModels: AIChatModelCard[] = [
     abilities: {
       functionCall: true,
       reasoning: true,
+      video: true,
       vision: true,
     },
     config: {
@@ -670,52 +924,6 @@ const doubaoChatModels: AIChatModelCard[] = [
       units: [
         { name: 'textInput', rate: 4, strategy: 'fixed', unit: 'millionTokens' },
         { name: 'textOutput', rate: 16, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    config: {
-      deploymentName: 'deepseek-r1-distill-qwen-32b-250120',
-    },
-    contextWindowTokens: 65_536,
-    description:
-      'DeepSeek-R1-Distill models are fine-tuned from open-source models using sample data generated by DeepSeek-R1.',
-    displayName: 'DeepSeek R1 Distill Qwen 32B',
-    id: 'deepseek-r1-distill-qwen-32b',
-    maxOutput: 8192,
-    pricing: {
-      currency: 'CNY',
-      units: [
-        { name: 'textInput', rate: 1.5, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 6, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    type: 'chat',
-  },
-  {
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    config: {
-      deploymentName: 'deepseek-r1-distill-qwen-7b-250120',
-    },
-    contextWindowTokens: 65_536,
-    description:
-      'DeepSeek-R1-Distill models are fine-tuned from open-source models using sample data generated by DeepSeek-R1.',
-    displayName: 'DeepSeek R1 Distill Qwen 7B',
-    id: 'deepseek-r1-distill-qwen-7b',
-    maxOutput: 8192,
-    pricing: {
-      currency: 'CNY',
-      units: [
-        { name: 'textInput', rate: 0.6, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 2.4, strategy: 'fixed', unit: 'millionTokens' },
       ],
     },
     type: 'chat',
@@ -808,6 +1016,7 @@ const doubaoChatModels: AIChatModelCard[] = [
   {
     abilities: {
       functionCall: true,
+      video: true,
       vision: true,
     },
     config: {
@@ -832,6 +1041,7 @@ const doubaoChatModels: AIChatModelCard[] = [
   {
     abilities: {
       functionCall: true,
+      video: true,
       vision: true,
     },
     config: {
@@ -856,6 +1066,7 @@ const doubaoChatModels: AIChatModelCard[] = [
   {
     abilities: {
       functionCall: true,
+      video: true,
       vision: true,
     },
     config: {
@@ -875,71 +1086,6 @@ const doubaoChatModels: AIChatModelCard[] = [
       ],
     },
     releasedAt: '2025-03-15',
-    type: 'chat',
-  },
-  {
-    abilities: {
-      vision: true,
-    },
-    config: {
-      deploymentName: 'doubao-vision-pro-32k-241028',
-    },
-    contextWindowTokens: 32_768,
-    description:
-      'Doubao-vision is a multimodal model from Doubao with strong image understanding and reasoning plus accurate instruction following. It performs well on image-text extraction and image-based reasoning tasks, enabling more complex and broader visual QA scenarios.',
-    displayName: 'Doubao Vision Pro 32k',
-    id: 'doubao-vision-pro-32k',
-    maxOutput: 4096,
-    pricing: {
-      currency: 'CNY',
-      units: [
-        { name: 'textInput', rate: 3, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 9, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2024-10-28',
-    type: 'chat',
-  },
-  {
-    abilities: {
-      vision: true,
-    },
-    config: {
-      deploymentName: 'doubao-vision-lite-32k-241015',
-    },
-    contextWindowTokens: 32_768,
-    description:
-      'Doubao-vision is a multimodal model from Doubao with strong image understanding and reasoning plus accurate instruction following. It performs well on image-text extraction and image-based reasoning tasks, enabling more complex and broader visual QA scenarios.',
-    displayName: 'Doubao Vision Lite 32k',
-    id: 'doubao-vision-lite-32k',
-    maxOutput: 4096,
-    pricing: {
-      currency: 'CNY',
-      units: [
-        { name: 'textInput', rate: 1.5, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 4.5, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    releasedAt: '2024-10-15',
-    type: 'chat',
-  },
-  {
-    config: {
-      deploymentName: 'doubao-lite-4k-character-240828',
-    },
-    contextWindowTokens: 4096,
-    description:
-      'Ultra-fast response with better value, offering more flexible choices across scenarios. Supports reasoning and fine-tuning with a 4k context window.',
-    displayName: 'Doubao Lite 4k',
-    id: 'doubao-lite-4k',
-    maxOutput: 4096,
-    pricing: {
-      currency: 'CNY',
-      units: [
-        { name: 'textInput', rate: 0.3, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 0.6, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
     type: 'chat',
   },
   {
@@ -963,25 +1109,6 @@ const doubaoChatModels: AIChatModelCard[] = [
   },
   {
     config: {
-      deploymentName: 'doubao-lite-128k-240828',
-    },
-    contextWindowTokens: 128_000,
-    description:
-      'Ultra-fast response with better value, offering more flexible choices across scenarios. Supports reasoning and fine-tuning with a 128k context window.',
-    displayName: 'Doubao Lite 128k',
-    id: 'doubao-lite-128k',
-    maxOutput: 4096,
-    pricing: {
-      currency: 'CNY',
-      units: [
-        { name: 'textInput', rate: 0.8, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 1, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    type: 'chat',
-  },
-  {
-    config: {
       deploymentName: 'doubao-pro-32k-241215',
     },
     contextWindowTokens: 32_768,
@@ -999,28 +1126,51 @@ const doubaoChatModels: AIChatModelCard[] = [
     },
     type: 'chat',
   },
-  {
-    config: {
-      deploymentName: 'doubao-pro-256k-241115',
-    },
-    contextWindowTokens: 256_000,
-    description:
-      'The best-performing flagship model for complex tasks, with strong results in reference QA, summarization, creation, text classification, and roleplay. Supports reasoning and fine-tuning with a 256k context window.',
-    displayName: 'Doubao Pro 256k',
-    id: 'doubao-pro-256k',
-    maxOutput: 4096,
-    pricing: {
-      currency: 'CNY',
-      units: [
-        { name: 'textInput', rate: 5, strategy: 'fixed', unit: 'millionTokens' },
-        { name: 'textOutput', rate: 9, strategy: 'fixed', unit: 'millionTokens' },
-      ],
-    },
-    type: 'chat',
-  },
 ];
 
 const volcengineImageModels: AIImageModelCard[] = [
+  {
+    description:
+      'Doubao-Seedream-5.0-lite is ByteDance’s latest image-generation model. For the first time, it integrates online retrieval capabilities, allowing it to incorporate real-time web information and enhance the timeliness of generated images. The model’s intelligence has also been upgraded, enabling precise interpretation of complex instructions and visual content. Additionally, it offers improved global knowledge coverage, reference consistency, and generation quality in professional scenarios, better meeting enterprise-level visual creation needs.',
+    displayName: 'Seedream 5.0 Lite',
+    enabled: true,
+    id: 'doubao-seedream-5-0-260128',
+    parameters: {
+      height: { default: 2048, max: 16_384, min: 480, step: 1 },
+      imageUrls: { default: [], maxCount: 14, maxFileSize: 10 * 1024 * 1024 },
+      prompt: {
+        default: '',
+      },
+      width: { default: 2048, max: 16_384, min: 480, step: 1 },
+    },
+    pricing: {
+      currency: 'CNY',
+      units: [{ name: 'imageGeneration', rate: 0, strategy: 'fixed', unit: 'image' }],
+    },
+    releasedAt: '2026-01-28',
+    type: 'image',
+  },
+  {
+    description:
+      'Seedream 4.5 is ByteDance’s latest multimodal image model, integrating text-to-image, image-to-image, and batch image generation capabilities, while incorporating commonsense and reasoning abilities. Compared to the previous 4.0 version, it delivers significantly improved generation quality, with better editing consistency and multi-image fusion. It offers more precise control over visual details, producing small text and small faces more naturally, and achieves more harmonious layout and color, enhancing overall aesthetics.',
+    displayName: 'Seedream 4.5',
+    enabled: true,
+    id: 'doubao-seedream-4-5-251128',
+    parameters: {
+      height: { default: 2048, max: 16_384, min: 480, step: 1 },
+      imageUrls: { default: [], maxCount: 14, maxFileSize: 10 * 1024 * 1024 },
+      prompt: {
+        default: '',
+      },
+      width: { default: 2048, max: 16_384, min: 480, step: 1 },
+    },
+    pricing: {
+      currency: 'CNY',
+      units: [{ name: 'imageGeneration', rate: 0.25, strategy: 'fixed', unit: 'image' }],
+    },
+    releasedAt: '2025-11-28',
+    type: 'image',
+  },
   {
     /*
     // TODO: AIImageModelCard does not support config.deploymentName
@@ -1034,23 +1184,16 @@ const volcengineImageModels: AIImageModelCard[] = [
     enabled: true,
     id: 'doubao-seedream-4-0-250828',
     parameters: {
+      height: { default: 2048, max: 16_384, min: 240, step: 1 },
       imageUrls: { default: [], maxCount: 10, maxFileSize: 10 * 1024 * 1024 },
       prompt: {
         default: '',
       },
-      size: {
-        default: '1024x1024',
-        enum: [
-          '2048x2048',
-          '2304x1728',
-          '1728x2304',
-          '2560x1440',
-          '1440x2560',
-          '2496x1664',
-          '1664x2496',
-          '3024x1296',
-        ],
-      },
+      width: { default: 2048, max: 16_384, min: 240, step: 1 },
+    },
+    pricing: {
+      currency: 'CNY',
+      units: [{ name: 'imageGeneration', rate: 0.2, strategy: 'fixed', unit: 'image' }],
     },
     releasedAt: '2025-09-09',
     type: 'image',
@@ -1069,23 +1212,16 @@ const volcengineImageModels: AIImageModelCard[] = [
     id: 'doubao-seedream-3-0-t2i-250415',
     parameters: {
       cfg: { default: 2.5, max: 10, min: 1, step: 0.1 },
+      height: { default: 1024, max: 3549, min: 296, step: 1 },
       prompt: {
         default: '',
       },
       seed: { default: null },
-      size: {
-        default: '1024x1024',
-        enum: [
-          '1024x1024',
-          '864x1152',
-          '1152x864',
-          '1280x720',
-          '720x1280',
-          '832x1248',
-          '1248x832',
-          '1512x648',
-        ],
-      },
+      width: { default: 1024, max: 3549, min: 296, step: 1 },
+    },
+    pricing: {
+      currency: 'CNY',
+      units: [{ name: 'imageGeneration', rate: 0.259, strategy: 'fixed', unit: 'image' }],
     },
     releasedAt: '2025-04-15',
     type: 'image',
@@ -1113,6 +1249,149 @@ const volcengineImageModels: AIImageModelCard[] = [
   },
 ];
 
-export const allModels = [...doubaoChatModels, ...volcengineImageModels];
+const volcengineVideoModels: AIVideoModelCard[] = [
+  {
+    description:
+      'Seedance 1.5 Pro by ByteDance supports text-to-video, image-to-video (first frame, first+last frame), and audio generation synchronized with visuals.',
+    displayName: 'Seedance 1.5 Pro',
+    enabled: true,
+    id: 'doubao-seedance-1-5-pro-251215',
+    organization: 'ByteDance',
+    parameters: seedance15ProParams,
+    releasedAt: '2025-12-15',
+    type: 'video',
+  },
+  {
+    description:
+      'Seedance 1.0 Pro Fast is a comprehensive model designed to minimize cost while maximizing performance, achieving an excellent balance between video generation quality, speed, and price. It inherits the core strengths of Seedance 1.0 Pro, while offering faster generation speeds and more competitive pricing, delivering creators a dual optimization of efficiency and cost.',
+    displayName: 'Seedance 1.0 Pro Fast',
+    id: 'doubao-seedance-1-0-pro-fast-251015',
+    organization: 'ByteDance',
+    parameters: {
+      aspectRatio: {
+        default: '16:9',
+        enum: ['21:9', '16:9', '4:3', '1.1', '3:4', '9:16'],
+      },
+      cameraFixed: { default: false },
+      duration: { default: 5, max: 12, min: 2 },
+      imageUrl: {
+        aspectRatio: { max: 2.5, min: 0.4 },
+        default: null,
+        height: { max: 6000, min: 300 },
+        maxFileSize: 30 * 1024 * 1024,
+        width: { max: 6000, min: 300 },
+      },
+      prompt: { default: '' },
+      resolution: {
+        default: '1080p',
+        enum: ['480p', '720p', '1080p'],
+      },
+      seed: { default: null },
+    },
+    releasedAt: '2025-10-15',
+    type: 'video',
+  },
+  {
+    description:
+      'Seedance 1.0 Pro is a video generation foundation model that supports multi-shot storytelling. It delivers strong performance across multiple dimensions. The model achieves breakthroughs in semantic understanding and instruction following, enabling it to generate 1080P high-definition videos with smooth motion, rich details, diverse styles, and cinematic-level visual aesthetics.',
+    displayName: 'Seedance 1.0 Pro',
+    id: 'doubao-seedance-1-0-pro-250528',
+    organization: 'ByteDance',
+    parameters: {
+      aspectRatio: {
+        default: '16:9',
+        enum: ['21:9', '16:9', '4:3', '1.1', '3:4', '9:16'],
+      },
+      cameraFixed: { default: false },
+      duration: { default: 5, max: 12, min: 2 },
+      endImageUrl: {
+        aspectRatio: { max: 2.5, min: 0.4 },
+        default: null,
+        height: { max: 6000, min: 300 },
+        maxFileSize: 30 * 1024 * 1024,
+        requiresImageUrl: true,
+        width: { max: 6000, min: 300 },
+      },
+      imageUrl: {
+        aspectRatio: { max: 2.5, min: 0.4 },
+        default: null,
+        height: { max: 6000, min: 300 },
+        maxFileSize: 30 * 1024 * 1024,
+        width: { max: 6000, min: 300 },
+      },
+      prompt: { default: '' },
+      resolution: {
+        default: '1080p',
+        enum: ['480p', '720p', '1080p'],
+      },
+      seed: { default: null },
+    },
+    releasedAt: '2025-05-28',
+    type: 'video',
+  },
+  {
+    description:
+      'Stable generation quality with high cost-effectiveness, capable of generating videos from a first frame, first-and-last frames, or reference images.',
+    displayName: 'Seedance 1.0 Lite I2V',
+    id: 'doubao-seedance-1-0-lite-i2v-250428',
+    organization: 'ByteDance',
+    parameters: {
+      aspectRatio: {
+        default: '16:9',
+        enum: ['21:9', '16:9', '4:3', '1.1', '3:4', '9:16'],
+      },
+      cameraFixed: { default: false },
+      endImageUrl: {
+        aspectRatio: { max: 2.5, min: 0.4 },
+        default: null,
+        height: { max: 6000, min: 300 },
+        maxFileSize: 30 * 1024 * 1024,
+        requiresImageUrl: true,
+        width: { max: 6000, min: 300 },
+      },
+      imageUrl: {
+        aspectRatio: { max: 2.5, min: 0.4 },
+        default: null,
+        height: { max: 6000, min: 300 },
+        maxFileSize: 30 * 1024 * 1024,
+        width: { max: 6000, min: 300 },
+      },
+      duration: { default: 5, max: 12, min: 2 },
+      prompt: { default: '' },
+      resolution: {
+        default: '720p',
+        enum: ['480p', '720p', '1080p'],
+      },
+      seed: { default: null },
+    },
+    releasedAt: '2025-04-28',
+    type: 'video',
+  },
+  {
+    description:
+      'Stable generation quality with high cost-effectiveness, capable of generating videos based on text instructions.',
+    displayName: 'Seedance 1.0 Lite T2V',
+    id: 'doubao-seedance-1-0-lite-t2v-250428',
+    organization: 'ByteDance',
+    parameters: {
+      aspectRatio: {
+        default: '16:9',
+        enum: ['21:9', '16:9', '4:3', '1.1', '3:4', '9:16'],
+      },
+      cameraFixed: { default: false },
+      duration: { default: 5, max: 12, min: 2 },
+      prompt: { default: '' },
+      resolution: {
+        default: '720p',
+        enum: ['480p', '720p', '1080p'],
+      },
+      seed: { default: null },
+    },
+    releasedAt: '2025-04-28',
+    type: 'video',
+  },
+];
+
+export const allModels = [...doubaoChatModels, ...volcengineImageModels, ...volcengineVideoModels];
 
 export default allModels;

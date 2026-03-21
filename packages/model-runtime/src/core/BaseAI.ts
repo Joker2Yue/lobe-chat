@@ -6,22 +6,27 @@ import type {
   ChatStreamPayload,
   CreateImagePayload,
   CreateImageResponse,
+  CreateVideoPayload,
+  CreateVideoResponse,
   Embeddings,
   EmbeddingsOptions,
   EmbeddingsPayload,
   GenerateObjectOptions,
   GenerateObjectPayload,
+  HandleCreateVideoWebhookPayload,
+  HandleCreateVideoWebhookResult,
   ModelRequestOptions,
   PullModelParams,
   TextToSpeechOptions,
   TextToSpeechPayload,
 } from '../types';
 
-/* eslint-disable sort-keys-fix/sort-keys-fix , typescript-sort-keys/interface */
 export interface LobeRuntimeAI {
   baseURL?: string;
   chat?: (payload: ChatStreamPayload, options?: ChatMethodOptions) => Promise<Response>;
   createImage?: (payload: CreateImagePayload) => Promise<CreateImageResponse>;
+
+  createVideo?: (payload: CreateVideoPayload) => Promise<CreateVideoResponse>;
 
   embeddings?: (payload: EmbeddingsPayload, options?: EmbeddingsOptions) => Promise<Embeddings[]>;
 
@@ -29,6 +34,10 @@ export interface LobeRuntimeAI {
     payload: GenerateObjectPayload,
     options?: GenerateObjectOptions,
   ) => Promise<any>;
+
+  handleCreateVideoWebhook?: (
+    payload: HandleCreateVideoWebhookPayload,
+  ) => Promise<HandleCreateVideoWebhookResult>;
 
   models?: () => Promise<any>;
 

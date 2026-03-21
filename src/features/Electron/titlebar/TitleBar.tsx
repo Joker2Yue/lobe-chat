@@ -1,45 +1,27 @@
 import { TITLE_BAR_HEIGHT } from '@lobechat/desktop-bridge';
-import { useWatchBroadcast } from '@lobechat/electron-client-ipc';
 import { Flexbox } from '@lobehub/ui';
 import { Divider } from 'antd';
-import { memo, useMemo, useRef } from 'react';
+import { memo, useMemo } from 'react';
 
-import { useElectronStore } from '@/store/electron';
 import { electronStylish } from '@/styles/electron';
-import { isMacOS } from '@/utils/platform';
+import { getPlatform, isMacOS } from '@/utils/platform';
 
 import Connection from '../connection/Connection';
+import { useTabNavigation } from '../navigation/useTabNavigation';
 import { useWatchThemeUpdate } from '../system/useWatchThemeUpdate';
-import { useUpdateModal } from '../updater/UpdateModal';
 import { UpdateNotification } from '../updater/UpdateNotification';
 import NavigationBar from './NavigationBar';
+import TabBar from './TabBar';
 import WinControl from './WinControl';
 
 const isMac = isMacOS();
+const isLinux = getPlatform() === 'Linux';
 
 const TitleBar = memo(() => {
-  const [isAppStateInit, initElectronAppState] = useElectronStore((s) => [
-    s.isAppStateInit,
-    s.useInitElectronAppState,
-  ]);
-
-  initElectronAppState();
   useWatchThemeUpdate();
+  useTabNavigation();
 
-  const { open: openUpdateModal } = useUpdateModal();
-  const updateModalOpenRef = useRef(false);
-
-  useWatchBroadcast('manualUpdateCheckStart', () => {
-    if (updateModalOpenRef.current) return;
-    updateModalOpenRef.current = true;
-    openUpdateModal({
-      onAfterClose: () => {
-        updateModalOpenRef.current = false;
-      },
-    });
-  });
-
-  const showWinControl = isAppStateInit && !isMac;
+  const showWinControl = isLinux && !isMac;
 
   const padding = useMemo(() => {
     if (showWinControl) {
@@ -47,7 +29,7 @@ const TitleBar = memo(() => {
     }
 
     return '0 12px';
-  }, [showWinControl, isMac]);
+  }, [showWinControl]);
 
   return (
     <Flexbox
@@ -60,6 +42,7 @@ const TitleBar = memo(() => {
       width={'100%'}
     >
       <NavigationBar />
+      <TabBar />
 
       <Flexbox horizontal align={'center'} gap={4}>
         <Flexbox horizontal className={electronStylish.nodrag} gap={8}>

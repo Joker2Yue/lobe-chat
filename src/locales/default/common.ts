@@ -34,7 +34,10 @@ export default {
     'Current topic is not saved, please save it first to use subtopic feature',
   'cancel': 'Cancel',
   'changelog': 'Changelog',
+  'alreadyUpToDate': 'Already Up to Date',
   'checkForUpdates': 'Check for Updates',
+  'downloadingUpdate': 'Downloading {{percent}}%',
+  'restartToUpdate': 'Restart to Update',
   'clientDB.autoInit.title': 'Initializing PGlite Database',
   'clientDB.error.desc':
     'PGlite failed to initialize. Retry first. If it helps, open Self-serve fixes and follow the steps. Still stuck after a few tries? Use Report issue to send us the error details.',
@@ -183,6 +186,8 @@ export default {
 
   'cmdk.keywords.usage': 'usage statistics consumption quota',
 
+  'cmdk.keywords.video': 'video,generate,seedance,kling',
+
   'cmdk.memory': 'Memory',
 
   'cmdk.mentionAgent': 'Mention Agent',
@@ -217,6 +222,10 @@ export default {
 
   'cmdk.search.assistants': 'Agents',
 
+  'cmdk.search.chatGroup': 'Agent Team',
+
+  'cmdk.search.chatGroups': 'Agent Teams',
+
   'cmdk.search.communityAgent': 'Community Agent',
 
   'cmdk.search.file': 'File',
@@ -226,6 +235,10 @@ export default {
   'cmdk.search.folder': 'Folder',
 
   'cmdk.search.folders': 'Folders',
+
+  'cmdk.search.knowledgeBase': 'Library',
+
+  'cmdk.search.knowledgeBases': 'Libraries',
 
   'cmdk.search.loading': 'Searching...',
 
@@ -259,6 +272,8 @@ export default {
   'cmdk.toOpen': 'Open',
   'cmdk.toSelect': 'Select',
 
+  'cmdk.video': 'AI Video',
+
   'confirm': 'Confirm',
   'contact': 'Contact Us',
   'copy': 'Copy',
@@ -273,7 +288,7 @@ export default {
   'delete': 'Delete',
   'document': 'User Manual',
   'download': 'Download',
-  'downloadClient': 'Download Client',
+  'getDesktopApp': 'Get Desktop App',
   'duplicate': 'Duplicate',
   'edit': 'Edit',
   'errors.invalidFileFormat': 'Invalid file format',
@@ -286,6 +301,7 @@ export default {
   'exportType.allAgentWithMessage': 'Export All Agents and Messages',
   'exportType.globalSetting': 'Export Global Settings',
   'feedback': 'Feedback',
+  'feedback.emailContact': 'You can also email us at {{email}}',
   'feedback.errors.fileTooLarge': 'File exceeds 5MB',
   'feedback.errors.submitFailed': 'Submit failed. Try again.',
   'feedback.errors.teamNotFound': 'Configuration error',
@@ -321,12 +337,7 @@ export default {
   'footer.star.title': 'Star us on GitHub',
   'footer.title': 'Like Our Product?',
   'fullscreen': 'Full Screen Mode',
-  'geminiImageChineseWarning.content':
-    'Nano Banana may occasionally fail to generate images when using Chinese. It is recommended to use English for better results.',
-  'geminiImageChineseWarning.continueGenerate': 'Continue Generating',
-  'geminiImageChineseWarning.continueSend': 'Continue Sending',
-  'geminiImageChineseWarning.doNotShowAgain': 'Do Not Show Again',
-  'geminiImageChineseWarning.title': 'Chinese Input Notice',
+  'generation.hero.taglinePrefix': 'Start Creating with',
   'historyRange': 'History Range',
   'home.suggestQuestions': 'Try these examples',
   'import': 'Import',
@@ -413,6 +424,7 @@ export default {
   'navPanel.searchAgent': 'Search Agent...',
   'navPanel.searchResultEmpty': 'No search results found',
   'new': 'New',
+  'pro': 'Pro',
   'noContent': 'No content',
   'oauth': 'SSO Login',
   'officialSite': 'Official Website',
@@ -469,9 +481,11 @@ export default {
   'tab.chat': 'Chat',
   'tab.community': 'Community',
   'tab.discover': 'Discover',
+  'tab.eval': 'Eval Lab',
   'tab.files': 'Files',
   'tab.home': 'Home',
   'tab.knowledgeBase': 'Library',
+  'tab.marketplace': 'Marketplace',
   'tab.me': 'Me',
   'tab.memory': 'Memory',
   'tab.pages': 'Pages',
@@ -500,7 +514,7 @@ export default {
   'userPanel.community': 'Community',
   'userPanel.data': 'Data Storage',
   'userPanel.defaultNickname': 'Community User',
-  'userPanel.discord': 'Community Support',
+  'userPanel.discord': 'Discord',
   'userPanel.docs': 'Documentation',
   'userPanel.email': 'Email Support',
   'userPanel.feedback': 'Contact Us',

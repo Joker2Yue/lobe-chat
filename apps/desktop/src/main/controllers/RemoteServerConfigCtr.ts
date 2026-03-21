@@ -1,8 +1,9 @@
-import { DataSyncConfig } from '@lobechat/electron-client-ipc';
-import retry from 'async-retry';
-import { session as electronSession, safeStorage } from 'electron';
 import querystring from 'node:querystring';
 import { URL } from 'node:url';
+
+import type { DataSyncConfig } from '@lobechat/electron-client-ipc';
+import retry from 'async-retry';
+import { safeStorage, session as electronSession } from 'electron';
 
 import { OFFICIAL_CLOUD_SERVER } from '@/const/env';
 import { appendVercelCookie } from '@/utils/http-headers';
@@ -92,10 +93,26 @@ export default class RemoteServerConfigCtr extends ControllerModule {
    */
   async isRemoteServerConfigured(config?: DataSyncConfig): Promise<boolean> {
     const effectiveConfig = config ?? (await this.getRemoteServerConfig());
-    return (
-      effectiveConfig.active &&
-      (effectiveConfig.storageMode !== 'selfHost' || !!effectiveConfig.remoteServerUrl)
-    );
+    const isActive = Boolean(effectiveConfig.active);
+    const isSelfHostConfigured =
+      effectiveConfig.storageMode !== 'selfHost' ||
+      this.isValidSelfHostRemoteUrl(effectiveConfig.remoteServerUrl);
+
+    return isActive && isSelfHostConfigured;
+  }
+
+  private isValidSelfHostRemoteUrl(remoteServerUrl?: string): boolean {
+    if (!remoteServerUrl) return false;
+    const normalizedUrl = remoteServerUrl.trim();
+
+    if (!normalizedUrl) return false;
+
+    try {
+      const parsedUrl = new URL(normalizedUrl);
+      return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
+    } catch {
+      return false;
+    }
   }
 
   /**
@@ -536,7 +553,7 @@ export default class RemoteServerConfigCtr extends ControllerModule {
   }
 
   async getRemoteServerUrl(config?: DataSyncConfig) {
-    const dataConfig = this.normalizeConfig(config ? config : await this.getRemoteServerConfig());
+    const dataConfig = this.normalizeConfig(config ?? (await this.getRemoteServerConfig()));
 
     return dataConfig.storageMode === 'cloud' ? OFFICIAL_CLOUD_SERVER : dataConfig.remoteServerUrl;
   }

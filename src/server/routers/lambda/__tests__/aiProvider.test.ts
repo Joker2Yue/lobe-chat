@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AiProviderModel } from '@/database/models/aiProvider';
@@ -38,8 +39,9 @@ describe('aiProviderRouter', () => {
     enabledAiModels: [],
     enabledAiProviders: [],
     enabledChatAiProviders: [],
-    runtimeConfig: {},
     enabledImageAiProviders: [],
+    enabledVideoAiProviders: [],
+    runtimeConfig: {},
   };
 
   beforeEach(() => {

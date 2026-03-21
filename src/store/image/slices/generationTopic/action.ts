@@ -10,7 +10,7 @@ import { generationTopicService } from '@/services/generationTopic';
 import { globalHelpers } from '@/store/global/helpers';
 import { type StoreSetter } from '@/store/types';
 import { useUserStore } from '@/store/user';
-import { systemAgentSelectors } from '@/store/user/selectors';
+import { systemAgentSelectors, userGeneralSettingsSelectors } from '@/store/user/selectors';
 import { type ImageGenerationTopic } from '@/types/generation';
 import { merge } from '@/utils/merge';
 import { setNamespace } from '@/utils/storeDebug';
@@ -56,17 +56,14 @@ export class GenerationTopicActionImpl {
   };
 
   switchGenerationTopic = (topicId: string): void => {
-    // Check if topic exists
-    const currentTopics = this.#get().generationTopics;
-    const targetTopic = currentTopics.find((topic) => topic.id === topicId);
+    // Don't update if already active
+    if (this.#get().activeGenerationTopicId === topicId) return;
 
-    if (!targetTopic) {
+    const topic = generationTopicSelectors.getGenerationTopicById(topicId)(this.#get());
+    if (!topic) {
       console.warn(`Generation topic with id ${topicId} not found`);
       return;
     }
-
-    // Don't update if already active
-    if (this.#get().activeGenerationTopicId === topicId) return;
 
     this.#set({ activeGenerationTopicId: topicId }, false, n('switchGenerationTopic'));
   };
@@ -108,7 +105,12 @@ export class GenerationTopicActionImpl {
     await chatService.fetchPresetTaskResult({
       params: merge(
         generationTopicAgentConfig,
-        chainSummaryGenerationTitle(prompts, 'image', globalHelpers.getCurrentLanguage()),
+        chainSummaryGenerationTitle(
+          prompts,
+          'image',
+          userGeneralSettingsSelectors.responseLanguage(useUserStore.getState()) ||
+            globalHelpers.getCurrentLanguage(),
+        ),
       ),
       onError: async () => {
         const fallbackTitle = generateFallbackTitle();
@@ -147,7 +149,7 @@ export class GenerationTopicActionImpl {
     this.#get().internal_updateGenerationTopicLoading(tmpId, true);
 
     // 2. Call backend service
-    const topicId = await generationTopicService.createTopic();
+    const topicId = await generationTopicService.createTopic('image');
     this.#get().internal_updateGenerationTopicLoading(tmpId, false);
 
     // 3. Refresh data to ensure consistency
@@ -210,7 +212,7 @@ export class GenerationTopicActionImpl {
   useFetchGenerationTopics = (enabled: boolean): SWRResponse<ImageGenerationTopic[]> => {
     return useClientDataSWR<ImageGenerationTopic[]>(
       enabled ? [FETCH_GENERATION_TOPICS_KEY] : null,
-      () => generationTopicService.getAllGenerationTopics(),
+      () => generationTopicService.getAllGenerationTopics('image'),
       {
         suspense: true,
         onSuccess: (data) => {

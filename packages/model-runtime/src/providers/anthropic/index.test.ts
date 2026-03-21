@@ -14,7 +14,7 @@ const bizErrorType = 'ProviderBizError';
 const invalidErrorType = 'InvalidProviderAPIKey';
 
 // Mock the console.error to avoid polluting test output
-vi.spyOn(console, 'error').mockImplementation(() => { });
+vi.spyOn(console, 'error').mockImplementation(() => {});
 
 let instance: InstanceType<typeof LobeAnthropicAI>;
 
@@ -124,7 +124,7 @@ describe('LobeAnthropicAI', () => {
           { content: 'You are an awesome greeter', role: 'system' },
           { content: 'Hello', role: 'user' },
         ],
-        model: 'claude-3-7-sonnet-20250219',
+        model: 'claude-sonnet-4-5-20250929',
         temperature: 0,
       });
 
@@ -138,7 +138,7 @@ describe('LobeAnthropicAI', () => {
               role: 'user',
             },
           ],
-          model: 'claude-3-7-sonnet-20250219',
+          model: 'claude-sonnet-4-5-20250929',
           stream: true,
           system: [
             {
@@ -629,6 +629,68 @@ describe('LobeAnthropicAI', () => {
               },
             ],
             temperature: 0.35,
+          }),
+        );
+      });
+
+      it('should omit top_p for Claude 4+ models when both temperature and top_p are set', async () => {
+        const payload: ChatStreamPayload = {
+          messages: [{ content: 'Hello', role: 'user' }],
+          model: 'claude-sonnet-4-5-20250929',
+          temperature: 0.8,
+          top_p: 0.9,
+        };
+
+        const result = await buildDefaultAnthropicPayload(payload);
+
+        expect(result).toEqual(
+          expect.objectContaining({
+            model: 'claude-sonnet-4-5-20250929',
+            temperature: 0.4,
+            top_p: undefined,
+          }),
+        );
+      });
+
+      it('should keep top_p for Claude 4+ models when only top_p is set', async () => {
+        const payload: ChatStreamPayload = {
+          messages: [{ content: 'Hello', role: 'user' }],
+          model: 'claude-sonnet-4-5-20250929',
+          top_p: 0.9,
+        };
+
+        const result = await buildDefaultAnthropicPayload(payload);
+
+        expect(result).toEqual(
+          expect.objectContaining({
+            model: 'claude-sonnet-4-5-20250929',
+            temperature: undefined,
+            top_p: 0.9,
+          }),
+        );
+      });
+
+      it('should ignore whitespace-only system prompts', async () => {
+        const payload: ChatStreamPayload = {
+          messages: [
+            { content: '   \n\t  ', role: 'system' },
+            { content: 'Hello', role: 'user' },
+          ],
+          model: 'claude-3-haiku-20240307',
+          temperature: 0.7,
+        };
+
+        const result = await buildDefaultAnthropicPayload(payload);
+
+        expect(result).toEqual(
+          expect.objectContaining({
+            messages: [
+              {
+                content: [{ cache_control: { type: 'ephemeral' }, text: 'Hello', type: 'text' }],
+                role: 'user',
+              },
+            ],
+            system: undefined,
           }),
         );
       });

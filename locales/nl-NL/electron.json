@@ -93,6 +93,10 @@
   "sync.mode.useSelfHosted": "Een zelfgehoste instantie gebruiken?",
   "sync.selfHosted.description": "Communityversie die u zelf kunt implementeren",
   "sync.selfHosted.title": "Zelfgehoste instantie",
+  "tab.closeCurrentTab": "Tabblad sluiten",
+  "tab.closeLeftTabs": "Tabbladen links sluiten",
+  "tab.closeOtherTabs": "Andere tabbladen sluiten",
+  "tab.closeRightTabs": "Tabbladen rechts sluiten",
   "updater.checkingUpdate": "Controleren op updates",
   "updater.checkingUpdateDesc": "Versie-informatie wordt opgehaald...",
   "updater.downloadNewVersion": "Nieuwe versie downloaden",
@@ -116,5 +120,9 @@
   "waitingOAuth.errorTitle": "Autorisatieverbinding mislukt",
   "waitingOAuth.helpText": "Als de browser niet automatisch is geopend, klik dan op annuleren en probeer het opnieuw",
   "waitingOAuth.retry": "Opnieuw proberen",
-  "waitingOAuth.title": "Wachten op autorisatieverbinding"
+  "waitingOAuth.title": "Wachten op autorisatieverbinding",
+  "window.close": "Venster sluiten",
+  "window.maximize": "Venster maximaliseren",
+  "window.minimize": "Venster minimaliseren",
+  "window.restore": "Venster herstellen"
 }

@@ -110,7 +110,18 @@ export default class Browser {
   // ==================== Window Creation ====================
 
   private createBrowserWindow(): BrowserWindow {
-    const { title, width, height, ...rest } = this.options;
+    const {
+      title,
+      width,
+      height,
+      // Strip platform visual effect props — these are managed exclusively
+      // by WindowThemeManager.getPlatformConfig() to prevent config leaking
+      // from appBrowsers/windowTemplates into the BrowserWindow constructor.
+      vibrancy: _vibrancy,
+      visualEffectState: _visualEffectState,
+      transparent: _transparent,
+      ...rest
+    } = this.options;
 
     const resolvedState = this.stateManager.resolveState({ height, width });
     logger.info(`Creating new BrowserWindow instance: ${this.identifier}`);
@@ -125,9 +136,6 @@ export default class Browser {
       height: resolvedState.height,
       show: false,
       title,
-
-      vibrancy: 'sidebar',
-      visualEffectState: 'active',
       webPreferences: {
         backgroundThrottling: false,
         contextIsolation: true,
@@ -138,6 +146,7 @@ export default class Browser {
       width: resolvedState.width,
       x: resolvedState.x,
       y: resolvedState.y,
+      // Platform visual config is the SOLE source of vibrancy / transparency / titleBarOverlay.
       ...this.themeManager.getPlatformConfig(),
     });
   }
@@ -158,7 +167,7 @@ export default class Browser {
     // Setup devtools if enabled
     if (this.options.devTools) {
       logger.debug(`[${this.identifier}] Opening DevTools.`);
-      browserWindow.webContents.openDevTools();
+      browserWindow.webContents.openDevTools({ mode: 'detach' });
     }
 
     // Setup event listeners
@@ -482,7 +491,7 @@ export default class Browser {
 
   /**
    * Setup CORS bypass for ALL requests
-   * In production, the renderer uses app://next protocol which triggers CORS
+   * In production, the renderer uses app://renderer protocol which triggers CORS
    */
   private setupCORSBypass(browserWindow: BrowserWindow): void {
     logger.debug(`[${this.identifier}] Setting up CORS bypass for all requests`);

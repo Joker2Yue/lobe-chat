@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { App as AppCore } from '../../App';
-import Browser, { BrowserWindowOpts } from '../Browser';
+import { type App as AppCore } from '../../App';
+import Browser, { type BrowserWindowOpts } from '../Browser';
 
 // Use vi.hoisted to define mocks before hoisting
 const { mockBrowserWindow, mockNativeTheme, mockIpcMain, mockScreen, MockBrowserWindow } =
@@ -99,7 +99,9 @@ vi.mock('@/const/dir', () => ({
 
 vi.mock('@/const/env', () => ({
   isDev: false,
+  isLinux: false,
   isMac: false,
+  isMacTahoe: false,
   isWindows: true,
 }));
 
@@ -239,7 +241,7 @@ describe('Browser', () => {
       });
 
       // Create new browser to trigger initialization with saved state
-      const newBrowser = new Browser(defaultOptions, mockApp);
+      const _newBrowser = new Browser(defaultOptions, mockApp);
 
       expect(MockBrowserWindow).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -327,7 +329,7 @@ describe('Browser', () => {
         mockNativeTheme.shouldUseDarkColors = true;
 
         // Create browser with dark mode
-        const darkBrowser = new Browser(defaultOptions, mockApp);
+        const _darkBrowser = new Browser(defaultOptions, mockApp);
 
         expect(MockBrowserWindow).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -602,12 +604,12 @@ describe('Browser', () => {
         ...defaultOptions,
         keepAlive: true,
       };
-      const keepAliveBrowser = new Browser(keepAliveOptions, mockApp);
+      const _keepAliveBrowser = new Browser(keepAliveOptions, mockApp);
 
       // Get the new close handler
-      const keepAliveCloseHandler = mockBrowserWindow.on.mock.calls
-        .filter((call) => call[0] === 'close')
-        .pop()?.[1];
+      const keepAliveCloseHandler = mockBrowserWindow.on.mock.calls.findLast(
+        (call) => call[0] === 'close',
+      )?.[1];
 
       const mockEvent = { preventDefault: vi.fn() };
       keepAliveCloseHandler(mockEvent);

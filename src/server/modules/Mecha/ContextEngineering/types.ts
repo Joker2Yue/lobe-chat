@@ -1,12 +1,18 @@
-import {
-  type AgentBuilderContext,
-  type FileContent,
-  type KnowledgeBaseInfo,
-  type LobeToolManifest,
-  type UserMemoryData,
+/* eslint-disable perfectionist/sort-interfaces */
+import type {
+  AgentBuilderContext,
+  AgentManagementContext,
+  DiscordContext,
+  EvalContext,
+  FileContent,
+  KnowledgeBaseInfo,
+  LobeToolManifest,
+  SkillMeta,
+  TopicReferenceItem,
+  UserMemoryData,
 } from '@lobechat/context-engine';
-import { type PageContentContext } from '@lobechat/prompts';
-import { type UIChatMessage } from '@lobechat/types';
+import type { PageContentContext } from '@lobechat/prompts';
+import type { UIChatMessage } from '@lobechat/types';
 
 /**
  * Model capability checker functions for server-side
@@ -57,15 +63,30 @@ export interface ServerUserMemoryConfig {
  * instead of fetching from stores
  */
 export interface ServerMessagesEngineParams {
+  /** Additional variable values to merge with defaults (e.g. device paths) */
+  additionalVariables?: Record<string, string>;
+  /** User's timezone for time-related variables (e.g. 'Asia/Shanghai') */
+  userTimezone?: string;
   // ========== Extended contexts ==========
   /** Agent Builder context (optional, for editing agents) */
   agentBuilderContext?: AgentBuilderContext;
+  /** Agent Management context (optional, available models and plugins) */
+  agentManagementContext?: AgentManagementContext;
   // ========== Capability injection ==========
   /** Model capability checkers */
   capabilities?: ServerModelCapabilities;
+  /** Discord context for injecting channel/guild info */
+  discordContext?: DiscordContext;
+  // ========== Eval context ==========
+  /** Eval context for injecting environment prompts into system message */
+  evalContext?: EvalContext;
+
   // ========== Agent configuration ==========
   /** Whether to enable history message count limit */
   enableHistoryCount?: boolean;
+
+  /** Force finish flag: when true, injects summary prompt for max-steps completion */
+  forceFinish?: boolean;
 
   /** Function to format history summary */
   formatHistorySummary?: (summary: string) => string;
@@ -94,9 +115,15 @@ export interface ServerMessagesEngineParams {
   /** System role */
   systemRole?: string;
 
+  // ========== Skills ==========
+  /** Skills configuration for <available_skills> injection */
+  skillsConfig?: { enabledSkills?: SkillMeta[] };
   // ========== Tools ==========
   /** Tools configuration */
   toolsConfig?: ServerToolsConfig;
+  // ========== Topic References ==========
+  /** Topic reference summaries to inject into last user message */
+  topicReferences?: TopicReferenceItem[];
   // ========== User memory ==========
   /** User memory configuration */
   userMemory?: ServerUserMemoryConfig;
@@ -106,8 +133,12 @@ export interface ServerMessagesEngineParams {
 
 export {
   type AgentBuilderContext,
+  type AgentManagementContext,
+  type DiscordContext,
+  type EvalContext,
   type FileContent,
   type KnowledgeBaseInfo,
+  type TopicReferenceItem,
   type UserMemoryData,
 } from '@lobechat/context-engine';
 export type { PageContentContext } from '@lobechat/prompts';

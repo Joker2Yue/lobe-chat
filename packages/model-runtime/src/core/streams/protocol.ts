@@ -19,6 +19,7 @@ export type ChatPayloadForTransformStream = {
  * context in the stream to save temporarily data
  */
 export interface StreamContext {
+  chunkIndex?: number;
   id: string;
   /**
    * As pplx citations is in every chunk, but we only need to return it once
@@ -266,6 +267,7 @@ export function createCallbacksTransformer(cb: ChatStreamCallbacks | undefined) 
   let speed: ModelPerformance | undefined;
   let grounding: any;
   let toolsCalling: any;
+  let streamError: any;
   // Track base64 images for accumulation
   const base64Images: Array<{ data: string; id: string }> = [];
 
@@ -275,6 +277,7 @@ export function createCallbacksTransformer(cb: ChatStreamCallbacks | undefined) 
   return new TransformStream<string, Uint8Array>({
     async flush(): Promise<void> {
       const data = {
+        error: streamError,
         grounding,
         speed,
         text: aggregatedText,
@@ -385,6 +388,13 @@ export function createCallbacksTransformer(cb: ChatStreamCallbacks | undefined) 
             toolsCalling = parseToolCalls(toolsCalling, data);
 
             await callbacks.onToolsCalling?.({ chunk: data, toolsCalling });
+            break;
+          }
+
+          case 'error': {
+            streamError = data;
+            await callbacks.onError?.(data);
+            break;
           }
         }
       }

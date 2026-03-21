@@ -93,6 +93,10 @@
   "sync.mode.useSelfHosted": "Использовать собственный сервер?",
   "sync.selfHosted.description": "Сообщественная версия, которую вы можете развернуть самостоятельно",
   "sync.selfHosted.title": "Собственный сервер",
+  "tab.closeCurrentTab": "Закрыть вкладку",
+  "tab.closeLeftTabs": "Закрыть вкладки слева",
+  "tab.closeOtherTabs": "Закрыть другие вкладки",
+  "tab.closeRightTabs": "Закрыть вкладки справа",
   "updater.checkingUpdate": "Проверка обновлений",
   "updater.checkingUpdateDesc": "Получение информации о версии...",
   "updater.downloadNewVersion": "Скачать новую версию",
@@ -116,5 +120,9 @@
   "waitingOAuth.errorTitle": "Не удалось подключиться к авторизации",
   "waitingOAuth.helpText": "Если браузер не открылся автоматически, нажмите «Отмена» и попробуйте снова",
   "waitingOAuth.retry": "Повторить",
-  "waitingOAuth.title": "Ожидание подключения к авторизации"
+  "waitingOAuth.title": "Ожидание подключения к авторизации",
+  "window.close": "Закрыть окно",
+  "window.maximize": "Развернуть окно",
+  "window.minimize": "Свернуть окно",
+  "window.restore": "Восстановить окно"
 }

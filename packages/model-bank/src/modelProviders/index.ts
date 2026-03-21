@@ -34,6 +34,7 @@ import InternLMProvider from './internlm';
 import JinaProvider from './jina';
 import LMStudioProvider from './lmstudio';
 import LobeHubProvider from './lobehub';
+import LongCatProvider from './longcat';
 import MinimaxProvider from './minimax';
 import MistralProvider from './mistral';
 import ModelScopeProvider from './modelscope';
@@ -57,6 +58,7 @@ import SenseNovaProvider from './sensenova';
 import SiliconCloudProvider from './siliconcloud';
 import SparkProvider from './spark';
 import StepfunProvider from './stepfun';
+import StraicoProvider from './straico';
 import TaichuProvider from './taichu';
 import TencentcloudProvider from './tencentcloud';
 import TogetherAIProvider from './togetherai';
@@ -201,7 +203,9 @@ export const DEFAULT_MODEL_PROVIDER_LIST = [
   VercelAIGatewayProvider,
   CerebrasProvider,
   ZenMuxProvider,
+  StraicoProvider,
   XiaomiMiMoProvider,
+  LongCatProvider,
 ];
 
 export const filterEnabledModels = (provider: ModelProviderCard) => {
@@ -209,7 +213,9 @@ export const filterEnabledModels = (provider: ModelProviderCard) => {
 };
 
 export const isProviderDisableBrowserRequest = (id: string) => {
-  const provider = DEFAULT_MODEL_PROVIDER_LIST.find((v) => v.id === id && v.disableBrowserRequest);
+  const provider = DEFAULT_MODEL_PROVIDER_LIST.find(
+    (v) => v.id === id && (v.disableBrowserRequest || v.settings?.disableBrowserRequest),
+  );
   return !!provider;
 };
 
@@ -245,6 +251,7 @@ export { default as InternLMProviderCard } from './internlm';
 export { default as JinaProviderCard } from './jina';
 export { default as LMStudioProviderCard } from './lmstudio';
 export { default as LobeHubProviderCard } from './lobehub';
+export { default as LongCatProviderCard } from './longcat';
 export { default as MinimaxProviderCard } from './minimax';
 export { default as MistralProviderCard } from './mistral';
 export { default as ModelScopeProviderCard } from './modelscope';
@@ -268,6 +275,7 @@ export { default as SenseNovaProviderCard } from './sensenova';
 export { default as SiliconCloudProviderCard } from './siliconcloud';
 export { default as SparkProviderCard } from './spark';
 export { default as StepfunProviderCard } from './stepfun';
+export { default as StraicoProviderCard } from './straico';
 export { default as TaichuProviderCard } from './taichu';
 export { default as TencentCloudProviderCard } from './tencentcloud';
 export { default as TogetherAIProviderCard } from './togetherai';

@@ -17,10 +17,12 @@ export enum SidebarTabKey {
   Pages = 'pages',
   Resource = 'resource',
   Setting = 'settings',
+  Video = 'video',
 }
 
 export enum ChatSettingsTabs {
   Chat = 'chat',
+  Documents = 'documents',
   Meta = 'meta',
   Modal = 'modal',
   Opening = 'opening',
@@ -37,13 +39,19 @@ export enum GroupSettingsTabs {
 
 export enum SettingsTabs {
   About = 'about',
+  Advanced = 'advanced',
+  /** @deprecated Use ServiceModel instead */
   Agent = 'agent',
   APIKey = 'apikey',
+  Appearance = 'appearance',
   Billing = 'billing',
+  /** @deprecated Use Appearance instead */
   ChatAppearance = 'chat-appearance',
+  /** @deprecated Use Appearance instead */
   Common = 'common',
-  Funds = 'funds',
+  Credits = 'credits',
   Hotkey = 'hotkey',
+  /** @deprecated Use ServiceModel instead */
   Image = 'image',
   LLM = 'llm',
   Memory = 'memory',
@@ -54,15 +62,15 @@ export enum SettingsTabs {
   Proxy = 'proxy',
   Referral = 'referral',
   Security = 'security',
+  ServiceModel = 'service-model',
   Skill = 'skill',
 
-  /* eslint-disable typescript-sort-keys/string-enum */
   Stats = 'stats',
   Storage = 'storage',
   SystemTools = 'system-tools',
+  /** @deprecated Use ServiceModel instead */
   TTS = 'tts',
   Usage = 'usage',
-  /* eslint-enable typescript-sort-keys/string-enum */
 }
 
 /**
@@ -100,12 +108,12 @@ export interface SystemStatus {
    * Group Agent Builder panel width
    */
   groupAgentBuilderPanelWidth?: number;
-  hideGemini2_5FlashImagePreviewChineseWarning?: boolean;
   hidePWAInstaller?: boolean;
   hideThreadLimitAlert?: boolean;
   hideTopicSharePrivacyWarning?: boolean;
   imagePanelWidth: number;
   imageTopicPanelWidth?: number;
+  imageTopicViewMode?: 'grid' | 'list';
   /**
    * Do not enable PGLite on app initialization, only enable when user manually turns it on
    */
@@ -121,6 +129,8 @@ export interface SystemStatus {
    * Remember user's last selected image generation provider
    */
   lastSelectedImageProvider?: string;
+  lastSelectedVideoModel?: string;
+  lastSelectedVideoProvider?: string;
   latestChangelogId?: string;
   leftPanelWidth: number;
   mobileShowPortal?: boolean;
@@ -157,6 +167,8 @@ export interface SystemStatus {
   showLeftPanel?: boolean;
   showRightPanel?: boolean;
   showSystemRole?: boolean;
+  showVideoPanel?: boolean;
+  showVideoTopicPanel?: boolean;
   systemRoleExpandedMap: Record<string, boolean>;
   /**
    * Whether to display tokens in short format
@@ -166,6 +178,9 @@ export interface SystemStatus {
    * number of topics to display per page
    */
   topicPageSize?: number;
+  videoPanelWidth: number;
+  videoTopicPanelWidth?: number;
+  videoTopicViewMode?: 'grid' | 'list';
   zenMode?: boolean;
 }
 
@@ -212,17 +227,17 @@ export const INITIAL_STATUS = {
   fileManagerViewMode: 'list' as const,
   filePanelWidth: 320,
   groupAgentBuilderPanelWidth: 360,
-  hideGemini2_5FlashImagePreviewChineseWarning: false,
   hidePWAInstaller: false,
   hideThreadLimitAlert: false,
   hideTopicSharePrivacyWarning: false,
   imagePanelWidth: 320,
+  imageTopicViewMode: 'grid' as const,
   imageTopicPanelWidth: 80,
   knowledgeBaseModalViewMode: 'list' as const,
   leftPanelWidth: 320,
   mobileShowTopic: false,
   modelSwitchPanelGroupMode: 'byProvider',
-  modelSwitchPanelWidth: 430,
+  modelSwitchPanelWidth: 460,
   noWideScreen: true,
   pageAgentPanelWidth: 360,
   pagePageSize: 20,
@@ -241,9 +256,14 @@ export const INITIAL_STATUS = {
   showLeftPanel: true,
   showRightPanel: true,
   showSystemRole: false,
+  showVideoPanel: true,
+  showVideoTopicPanel: true,
   systemRoleExpandedMap: {},
   tokenDisplayFormatShort: true,
   topicPageSize: 20,
+  videoPanelWidth: 320,
+  videoTopicViewMode: 'grid' as const,
+  videoTopicPanelWidth: 80,
   zenMode: false,
 } satisfies SystemStatus;
 
